@@ -1,140 +1,39 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const pages = {
-        addCourse: document.getElementById("add-course-section"),
-        addUser: document.getElementById("add-user-section"),
-        viewUsers: document.getElementById("user-list-section"),
-        viewCourses: document.getElementById("course-list-section")
-    };
-
+    const mainContent = document.querySelector(".main-content");
     const menuButtons = document.querySelectorAll(".panel-menu button");
 
-    let courses = [];
-    let users = [];
-    let teachersList = [];
-
-    function hideAllPages() {
-        Object.values(pages).forEach(p => p.classList.add("hidden"));
-    }
-
+    // ==========================
+    // مدیریت منو
+    // ==========================
     menuButtons.forEach(btn => {
         btn.addEventListener("click", () => {
             const action = btn.dataset.action;
-            hideAllPages();
+            document.querySelectorAll(".page").forEach(p => p.classList.add("hidden"));
+
             switch (action) {
                 case "add-course":
-                    pages.addCourse.classList.remove("hidden");
-                    renderTimes();
+                    document.getElementById("add-course-page").classList.remove("hidden");
                     break;
                 case "view-courses":
-                    pages.viewCourses.classList.remove("hidden");
+                    document.getElementById("courses-list-page").classList.remove("hidden");
                     renderCourseList();
                     break;
                 case "add-user":
-                    pages.addUser.classList.remove("hidden");
+                    document.getElementById("add-user-page").classList.remove("hidden");
                     break;
                 case "view-users":
-                    pages.viewUsers.classList.remove("hidden");
+                    document.getElementById("users-list-page").classList.remove("hidden");
                     renderUserList();
                     break;
-                default:
-                    break;
             }
         });
     });
 
     // ==========================
-    //  افزودن درس
+    // اضافه کردن کاربر با fetch
     // ==========================
-    const courseUnit = document.getElementById("course-unit");
-    const timesContainer = document.getElementById("course-times-container");
-
-    function renderTimes() {
-        const unit = courseUnit.value;
-        timesContainer.innerHTML = "";
-        const timesCount = unit === "3" ? 2 : 1;
-        for (let i = 0; i < timesCount; i++) {
-            timesContainer.innerHTML += `
-                <div class="form-group">
-                    <label>کد درس</label>
-                    <input type="number" class="course-code">
-                </div>
-                <div class="form-group">
-                    <label>اسم کلاس</label>
-                    <input type="text" class="course-class">
-                </div>
-                <div class="form-group">
-                    <label>روز هفته</label>
-                    <select class="course-day">
-                        <option>شنبه</option>
-                        <option>یکشنبه</option>
-                        <option>دوشنبه</option>
-                        <option>سه‌شنبه</option>
-                        <option>چهارشنبه</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>تایم کلاس</label>
-                    <select class="course-time">
-                        <option>8-10</option>
-                        <option>10-12</option>
-                        <option>2-4</option>
-                        <option>4-6</option>
-                    </select>
-                </div>
-                <hr>`;
-        }
-    }
-
-    courseUnit.addEventListener("change", renderTimes);
-
-    document.getElementById("add-course-btn").addEventListener("click", () => {
-        if (teachersList.length === 0) {
-            document.getElementById("course-error").textContent =
-                "هیچ استادی ثبت نشده است. لطفاً ابتدا استاد اضافه کنید.";
-            return;
-        }
-        const courseName = document.getElementById("course-name").value.trim();
-        const teacherName = document.getElementById("course-teacher").value.trim();
-        const codes = Array.from(document.querySelectorAll(".course-code")).map(e => e.value.trim());
-        const classes = Array.from(document.querySelectorAll(".course-class")).map(e => e.value.trim());
-        const days = Array.from(document.querySelectorAll(".course-day")).map(e => e.value.trim());
-        const times = Array.from(document.querySelectorAll(".course-time")).map(e => e.value.trim());
-
-        if (!courseName || !teacherName || codes.some(c => !c) || classes.some(c => !c)) {
-            document.getElementById("course-error").textContent = "لطفا همه فیلدها را پر کنید.";
-            return;
-        }
-
-        for (let i = 0; i < times.length; i++) {
-            for (let c of courses) {
-                for (let j = 0; j < c.times.length; j++) {
-                    if (c.teacher === teacherName && c.days[j] === days[i] && c.times[j] === times[i]) {
-                        document.getElementById("course-error").textContent =
-                            `استاد ${teacherName} قبلا کلاس دارد در ${days[i]} ${times[i]}`;
-                        return;
-                    }
-                }
-            }
-        }
-
-        courses.push({
-            name: courseName,
-            teacher: teacherName,
-            codes,
-            classes,
-            days,
-            times
-        });
-
-        document.getElementById("course-error").textContent = "درس با موفقیت اضافه شد!";
-        document.getElementById("course-name").value = "";
-        renderTimes();
-    });
-
-    // ==========================
-    //  اضافه کردن کاربر
-    // ==========================
-    document.getElementById("add-user-btn").addEventListener("click", () => {
+    const addUserBtn = document.getElementById("add-user-btn");
+    addUserBtn.addEventListener("click", async() => {
         const name = document.getElementById("user-name").value.trim();
         const family = document.getElementById("user-family").value.trim();
         const id = document.getElementById("user-id").value.trim();
@@ -142,91 +41,108 @@ document.addEventListener("DOMContentLoaded", () => {
         const pass = document.getElementById("user-pass").value.trim();
         const email = document.getElementById("user-email").value.trim();
         const role = document.getElementById("user-role").value;
+        const errorEl = document.getElementById("user-error");
 
-        const nameRegex = /^[a-zA-Z\u0600-\u06FF\s]+$/;
-        const codeRegex = /^\d{10}$/;
-        const idRegex = /^\d+$/;
-
-        if (!nameRegex.test(name) || !nameRegex.test(family)) {
-            document.getElementById("user-error").textContent = "نام و نام خانوادگی باید فقط حروف باشند.";
-            return;
+        try {
+            const res = await fetch("/api/users", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, family, id, code, pass, email, role })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                errorEl.textContent = "کاربر با موفقیت اضافه شد!";
+                document.querySelectorAll("#add-user-page input").forEach(i => i.value = "");
+            } else {
+                errorEl.textContent = data.message || "خطا در ثبت کاربر";
+            }
+        } catch (err) {
+            errorEl.textContent = "ارتباط با سرور برقرار نشد";
         }
-        if (!codeRegex.test(code)) {
-            document.getElementById("user-error").textContent = "کد ملی باید 10 رقمی باشد.";
-            return;
-        }
-        if (!idRegex.test(id)) {
-            document.getElementById("user-error").textContent =
-                role === 'student' ? "شماره دانشجویی باید فقط عدد باشد." : "کد پرسنلی باید فقط عدد باشد.";
-            return;
-        }
-
-        const duplicate = users.some(u => u.role === role && u.id === id);
-        if (duplicate) {
-            document.getElementById("user-error").textContent =
-                role === 'student' ? "این شماره دانشجویی قبلا ثبت شده." : "این کد پرسنلی قبلا ثبت شده.";
-            return;
-        }
-
-        if (!pass) {
-            document.getElementById("user-error").textContent = "رمز عبور اجباری است.";
-            return;
-        }
-
-        const newUser = { name, family, id, code, pass, email, role };
-        users.push(newUser);
-
-        if (role === "teacher") {
-            teachersList.push({ name, family });
-        }
-
-        document.getElementById("user-error").textContent = "کاربر با موفقیت اضافه شد!";
-        document.querySelectorAll("#add-user-section input").forEach(i => i.value = "");
     });
 
     // ==========================
-    //  مشاهده لیست دروس
+    // اضافه کردن درس با fetch
     // ==========================
-    function renderCourseList() {
-        const tbody = document.getElementById("courses-table-body");
+    const addCourseBtn = document.getElementById("add-course-btn");
+    addCourseBtn.addEventListener("click", async() => {
+        const courseName = document.getElementById("course-name").value.trim();
+        const teacherName = document.getElementById("course-teacher").value.trim();
+        const codes = Array.from(document.querySelectorAll(".course-code")).map(e => e.value.trim());
+        const classes = Array.from(document.querySelectorAll(".course-class")).map(e => e.value.trim());
+        const days = Array.from(document.querySelectorAll(".course-day")).map(e => e.value.trim());
+        const times = Array.from(document.querySelectorAll(".course-time")).map(e => e.value.trim());
+        const errorEl = document.getElementById("course-error");
+
+        try {
+            const res = await fetch("/api/courses", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name: courseName, teacher: teacherName, codes, classes, days, times })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                errorEl.textContent = "درس با موفقیت اضافه شد!";
+                document.querySelector("#course-name").value = "";
+            } else {
+                errorEl.textContent = data.message || "خطا در ثبت درس";
+            }
+        } catch (err) {
+            errorEl.textContent = "ارتباط با سرور برقرار نشد";
+        }
+    });
+
+    // ==========================
+    // نمایش کاربران
+    // ==========================
+    async function renderUserList() {
+        const tbody = document.querySelector("#users-table-body");
         tbody.innerHTML = "";
-        courses.forEach(c => {
-            const rowsCount = c.times.length;
-            for (let i = 0; i < rowsCount; i++) {
+        try {
+            const res = await fetch("/api/users");
+            const users = await res.json();
+            users.forEach(u => {
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
-                    <td>${c.name}</td>
-                    <td>${c.teacher}</td>
-                    <td>${c.codes[i]}</td>
-                    <td>${c.classes[i]}</td>
-                    <td>${c.days[i]}</td>
-                    <td>${c.times[i]}</td>
+                    <td>${u.name}</td>
+                    <td>${u.family}</td>
+                    <td>${u.id}</td>
+                    <td>${u.code}</td>
+                    <td>${u.email || ""}</td>
+                    <td>${u.role === 'teacher' ? 'استاد' : 'دانشجو'}</td>
                 `;
                 tbody.appendChild(tr);
-            }
-        });
+            });
+        } catch (err) {
+            tbody.innerHTML = "<tr><td colspan='6'>خطا در دریافت کاربران</td></tr>";
+        }
     }
 
     // ==========================
-    //  مشاهده لیست کاربران
+    // نمایش دروس
     // ==========================
-    function renderUserList() {
-        const tbody = document.getElementById("users-table-body");
+    async function renderCourseList() {
+        const tbody = document.querySelector("#courses-table-body");
         tbody.innerHTML = "";
-        const students = users.filter(u => u.role === "student");
-        const teachers = users.filter(u => u.role === "teacher");
-
-        [...teachers, ...students].forEach(u => {
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-                <td>${u.name}</td>
-                <td>${u.family}</td>
-                <td>${u.id}</td>
-                <td>${u.code}</td>
-                <td>${u.email}</td>
-                <td>${u.role === 'teacher' ? 'استاد' : 'دانشجو'}</td>
-            `;
-            tbody.appendChild(tr);
-        });
+        try {
+            const res = await fetch("/api/courses");
+            const courses = await res.json();
+            courses.forEach(c => {
+                for (let i = 0; i < c.times.length; i++) {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td>${c.name}</td>
+                        <td>${c.teacher}</td>
+                        <td>${c.codes[i]}</td>
+                        <td>${c.classes[i]}</td>
+                        <td>${c.days[i]}</td>
+                        <td>${c.times[i]}</td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+            });
+        } catch (err) {
+            tbody.innerHTML = "<tr><td colspan='6'>خطا در دریافت دروس</td></tr>";
+        }
     }
 });
