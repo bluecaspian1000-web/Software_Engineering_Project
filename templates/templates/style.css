@@ -319,3 +319,201 @@ body {
         height: 70px;
     }
 }
+
+
+/* ---------------------------------
+   University Chamran Admin Panel - Professional CSS
+----------------------------------- */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Vazir', Tahoma, sans-serif;
+    background: linear-gradient(135deg, #1f2e56, #0a1f3d);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px;
+    color: #edf2f7;
+}
+
+.admin-container {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.admin-panel {
+    flex-shrink: 0;
+}
+
+.panel-menu {
+    width: 240px;
+    background: #f5f7fa;
+    border-radius: 16px;
+    padding: 20px;
+    color: #111827;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.panel-menu h2 {
+    margin-bottom: 20px;
+    font-size: 22px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.panel-menu button {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 12px;
+    border: none;
+    background: #dbeafe;
+    color: #111827;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.panel-menu button:hover {
+    background: #93c5fd;
+}
+
+.main-content {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(18px);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.05);
+    color: #edf2f7;
+    font-size: 15px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #2ea49d;
+    box-shadow: 0 6px 18px rgba(46, 164, 157, 0.35);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.form-group select {
+    background: #dbeafe;
+    color: #111827;
+}
+
+.form-group select option {
+    background: #dbeafe;
+    color: #111827;
+}
+
+.btn {
+    padding: 12px 20px;
+    border-radius: 12px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: linear-gradient(135deg, #2ea49d, #1f88a8);
+    color: #fff;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(46, 164, 157, 0.35);
+}
+
+.table-container {
+    overflow-x: auto;
+    width: 100%;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+table thead {
+    background: #2ea49d;
+    color: #fff;
+}
+
+table th,
+table td {
+    padding: 12px 14px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+table tbody tr:nth-child(even) {
+    background: rgba(46, 164, 157, 0.1);
+}
+
+table tbody tr:hover {
+    background: rgba(46, 164, 157, 0.2);
+}
+
+.error-message {
+    font-size: 13px;
+    color: #f87171;
+    margin-top: 4px;
+}
+
+.success-message {
+    font-size: 14px;
+    color: #4ade80;
+    margin-top: 4px;
+}
+
+@media (max-width: 1024px) {
+    .admin-container {
+        flex-direction: column;
+    }
+    .panel-menu {
+        width: 100%;
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+    }
+    .main-content {
+        padding: 20px;
+    }
+}
