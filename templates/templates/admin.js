@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const errorEl = document.getElementById("user-error");
 
         try {
-            const res = await fetch("/api/users", {
+            const res = await fetch("http://localhost:8000/api/users", { // ← تغییر URL
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ name, family, id, code, pass, email, role })
@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const errorEl = document.getElementById("course-error");
 
         try {
-            const res = await fetch("/api/courses", {
+            const res = await fetch("http://localhost:8000/api/courses", { // ← تغییر URL
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ name: courseName, teacher: teacherName, codes, classes, days, times })
@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const tbody = document.querySelector("#users-table-body");
         tbody.innerHTML = "";
         try {
-            const res = await fetch("/api/users");
+            const res = await fetch("http://localhost:8000/api/users"); // ← تغییر URL
             const users = await res.json();
             users.forEach(u => {
                 const tr = document.createElement("tr");
@@ -125,7 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const tbody = document.querySelector("#courses-table-body");
         tbody.innerHTML = "";
         try {
-            const res = await fetch("/api/courses");
+            const res = await fetch("http://localhost:8000/api/courses"); // ← تغییر URL
             const courses = await res.json();
             courses.forEach(c => {
                 for (let i = 0; i < c.times.length; i++) {
