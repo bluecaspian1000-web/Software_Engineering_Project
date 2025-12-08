@@ -14,8 +14,8 @@ toggleBtn.addEventListener("click", () => {
 // Form Validation
 // ================================
 const form = document.getElementById("loginForm");
-const emailInput = document.getElementById("email");
-const emailError = document.getElementById("emailError");
+const usernameInput = document.getElementById("username");
+const usernameError = document.getElementById("usernameError");
 const passwordError = document.getElementById("passwordError");
 const successBox = document.getElementById("successMessage");
 
@@ -23,18 +23,21 @@ form.addEventListener("submit", async function(e) {
     e.preventDefault(); // جلوگیری از ریفرش شدن
 
     let isValid = true;
-    emailError.textContent = "";
+    usernameError.textContent = "";
     passwordError.textContent = "";
 
-    // ---------------- Email Validation ----------------
-    const emailValue = emailInput.value.trim();
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // ---------------- Username Validation ----------------
+    const usernameValue = usernameInput.value.trim();
+    const numericRegex = /^[0-9]+$/; // فقط عددی باشد
 
-    if (emailValue === "") {
-        emailError.textContent = "ایمیل را وارد کنید.";
+    if (usernameValue === "") {
+        usernameError.textContent = "نام کاربری را وارد کنید.";
         isValid = false;
-    } else if (!emailRegex.test(emailValue)) {
-        emailError.textContent = "ایمیل معتبر نیست.";
+    } else if (!numericRegex.test(usernameValue)) {
+        usernameError.textContent = "فقط عدد وارد کنید.";
+        isValid = false;
+    } else if (usernameValue.length < 5) {
+        usernameError.textContent = "نام کاربری معتبر نیست.";
         isValid = false;
     }
 
@@ -57,7 +60,7 @@ form.addEventListener("submit", async function(e) {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    email: emailValue,
+                    username: usernameValue,
                     password: passValue
                 })
             });
@@ -65,9 +68,8 @@ form.addEventListener("submit", async function(e) {
             const data = await response.json();
 
             if (response.ok) {
-                showSuccessMessage(); // نمایش همان پیام موفقیت قبلی
+                showSuccessMessage();
             } else {
-                // نمایش خطای API
                 passwordError.textContent = data.message || "خطا در ورود!";
             }
 
