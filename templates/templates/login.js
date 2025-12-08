@@ -1,148 +1,97 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const mainContent = document.querySelector(".main-content");
-    const menuButtons = document.querySelectorAll(".panel-menu button");
+// ================================
+// Toggle Password Visibility
+// ================================
+const passwordInput = document.getElementById("password");
+const toggleBtn = document.getElementById("passwordToggle");
 
-    // ==========================
-    // مدیریت منو
-    // ==========================
-    menuButtons.forEach(btn => {
-        btn.addEventListener("click", () => {
-            const action = btn.dataset.action;
-            document.querySelectorAll(".page").forEach(p => p.classList.add("hidden"));
+toggleBtn.addEventListener("click", () => {
+    const type = passwordInput.type === "password" ? "text" : "password";
+    passwordInput.type = type;
+    toggleBtn.classList.toggle("active");
+});
 
-            switch (action) {
-                case "add-course":
-                    document.getElementById("add-course-page").classList.remove("hidden");
-                    break;
-                case "view-courses":
-                    document.getElementById("courses-list-page").classList.remove("hidden");
-                    renderCourseList();
-                    break;
-                case "add-user":
-                    document.getElementById("add-user-page").classList.remove("hidden");
-                    break;
-                case "view-users":
-                    document.getElementById("users-list-page").classList.remove("hidden");
-                    renderUserList();
-                    break;
-            }
-        });
-    });
+// ================================
+// Form Validation
+// ================================
+const form = document.getElementById("loginForm");
+const usernameInput = document.getElementById("username");
+const usernameError = document.getElementById("usernameError");
+const passwordError = document.getElementById("passwordError");
+const successBox = document.getElementById("successMessage");
 
-    // ==========================
-    // اضافه کردن استاد با fetch
-    // ==========================
-    const addUserBtn = document.getElementById("add-user-btn");
-    addUserBtn.addEventListener("click", async() => {
-        const name = document.getElementById("user-name").value.trim();
-        const family = document.getElementById("user-family").value.trim();
-        const id = document.getElementById("user-id").value.trim();
-        const code = document.getElementById("user-code").value.trim();
-        const pass = document.getElementById("user-pass").value.trim();
-        const email = document.getElementById("user-email").value.trim();
-        const role = document.getElementById("user-role").value;
-        const errorEl = document.getElementById("user-error");
+form.addEventListener("submit", async function(e) {
+    e.preventDefault(); // جلوگیری از ریفرش شدن
 
-        try {
-            const res = await fetch("http://localhost:8000/api/professors/create/", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name, family, id, code, pass, email, role })
-            });
-            const data = await res.json();
-            if (res.ok) {
-                errorEl.textContent = "کاربر با موفقیت اضافه شد!";
-                document.querySelectorAll("#add-user-page input").forEach(i => i.value = "");
-            } else {
-                errorEl.textContent = data.message || "خطا در ثبت کاربر";
-            }
-        } catch (err) {
-            errorEl.textContent = "ارتباط با سرور برقرار نشد";
-        }
-    });
+    let isValid = true;
+    usernameError.textContent = "";
+    passwordError.textContent = "";
 
-    // ==========================
-    // اضافه کردن درس با fetch
-    // ==========================
-    const addCourseBtn = document.getElementById("add-course-btn");
-    addCourseBtn.addEventListener("click", async() => {
-        const courseName = document.getElementById("course-name").value.trim();
-        const teacherName = document.getElementById("course-teacher").value.trim();
-        const codes = Array.from(document.querySelectorAll(".course-code")).map(e => e.value.trim());
-        const classes = Array.from(document.querySelectorAll(".course-class")).map(e => e.value.trim());
-        const days = Array.from(document.querySelectorAll(".course-day")).map(e => e.value.trim());
-        const times = Array.from(document.querySelectorAll(".course-time")).map(e => e.value.trim());
-        const errorEl = document.getElementById("course-error");
+    // ---------------- Username Validation ----------------
+    const usernameValue = usernameInput.value.trim();
+    const numericRegex = /^[0-9]+$/; // فقط عددی باشد
 
-        try {
-            const res = await fetch("http://localhost:8000/api/courses", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name: courseName, teacher: teacherName, codes, classes, days, times })
-            });
-            const data = await res.json();
-            if (res.ok) {
-                errorEl.textContent = "درس با موفقیت اضافه شد!";
-                document.querySelector("#course-name").value = "";
-            } else {
-                errorEl.textContent = data.message || "خطا در ثبت درس";
-            }
-        } catch (err) {
-            errorEl.textContent = "ارتباط با سرور برقرار نشد";
-        }
-    });
-
-    // ==========================
-    // نمایش اساتید
-    // ==========================
-    async function renderUserList() {
-        const tbody = document.querySelector("#users-table-body");
-        tbody.innerHTML = "";
-        try {
-            const res = await fetch("http://localhost:8000/api/professors/");
-            const users = await res.json();
-            users.forEach(u => {
-                const tr = document.createElement("tr");
-                tr.innerHTML = `
-                    <td>${u.name}</td>
-                    <td>${u.family}</td>
-                    <td>${u.id}</td>
-                    <td>${u.code}</td>
-                    <td>${u.email || ""}</td>
-                    <td>${u.role === 'teacher' ? 'استاد' : 'دانشجو'}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        } catch (err) {
-            tbody.innerHTML = "<tr><td colspan='6'>خطا در دریافت کاربران</td></tr>";
-        }
+    if (usernameValue === "") {
+        usernameError.textContent = "نام کاربری را وارد کنید.";
+        isValid = false;
+    } else if (!numericRegex.test(usernameValue)) {
+        usernameError.textContent = "فقط عدد وارد کنید.";
+        isValid = false;
+    } else if (usernameValue.length < 5) {
+        usernameError.textContent = "نام کاربری معتبر نیست.";
+        isValid = false;
     }
 
-    // ==========================
-    // نمایش دروس
-    // ==========================
-    async function renderCourseList() {
-        const tbody = document.querySelector("#courses-table-body");
-        tbody.innerHTML = "";
+    // ---------------- Password Validation ----------------
+    const passValue = passwordInput.value.trim();
+
+    if (passValue.length < 6) {
+        passwordError.textContent = "رمز عبور باید حداقل ۶ کاراکتر باشد.";
+        isValid = false;
+    }
+
+    // If form is valid → Send with fetch
+    if (isValid) {
+        showLoading();
+
         try {
-            const res = await fetch("http://localhost:8000/api/courses");
-            const courses = await res.json();
-            courses.forEach(c => {
-                for (let i = 0; i < c.times.length; i++) {
-                    const tr = document.createElement("tr");
-                    tr.innerHTML = `
-                        <td>${c.name}</td>
-                        <td>${c.teacher}</td>
-                        <td>${c.codes[i]}</td>
-                        <td>${c.classes[i]}</td>
-                        <td>${c.days[i]}</td>
-                        <td>${c.times[i]}</td>
-                    `;
-                    tbody.appendChild(tr);
-                }
+            const response = await fetch("http://localhost:8000/api/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    username: usernameValue,
+                    password: passValue
+                })
             });
-        } catch (err) {
-            tbody.innerHTML = "<tr><td colspan='6'>خطا در دریافت دروس</td></tr>";
+
+            const data = await response.json();
+
+            if (response.ok) {
+                showSuccessMessage();
+            } else {
+                passwordError.textContent = data.message || "خطا در ورود!";
+            }
+
+        } catch (error) {
+            passwordError.textContent = "اتصال به سرور برقرار نشد.";
         }
     }
 });
+
+// ================================
+// Loading Button Animation
+// ================================
+function showLoading() {
+    const btn = document.querySelector(".login-btn");
+    btn.classList.add("loading");
+}
+
+// ================================
+// Show Success Message
+// ================================
+function showSuccessMessage() {
+    const card = document.querySelector(".login-card");
+    successBox.style.display = "flex";
+    successBox.classList.add("show");
+}
