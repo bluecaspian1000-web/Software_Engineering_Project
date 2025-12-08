@@ -19,7 +19,7 @@ const emailError = document.getElementById("emailError");
 const passwordError = document.getElementById("passwordError");
 const successBox = document.getElementById("successMessage");
 
-form.addEventListener("submit", function(e) {
+form.addEventListener("submit", async function(e) {
     e.preventDefault(); // جلوگیری از ریفرش شدن
 
     let isValid = true;
@@ -46,12 +46,34 @@ form.addEventListener("submit", function(e) {
         isValid = false;
     }
 
-    // If form is valid
+    // If form is valid → Send with fetch
     if (isValid) {
         showLoading();
-        setTimeout(() => {
-            showSuccessMessage();
-        }, 1800);
+
+        try {
+            const response = await fetch("http://localhost:8000/api/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    email: emailValue,
+                    password: passValue
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                showSuccessMessage(); // نمایش همان پیام موفقیت قبلی
+            } else {
+                // نمایش خطای API
+                passwordError.textContent = data.message || "خطا در ورود!";
+            }
+
+        } catch (error) {
+            passwordError.textContent = "اتصال به سرور برقرار نشد.";
+        }
     }
 });
 
