@@ -1,11 +1,7 @@
-// ================================
-// API Configuration
-// ================================
 const API_BASE_URL = "http://localhost:8000/api";
 
-// ================================
 // Auth Helper Functions
-// ================================
+
 function getAccessToken() {
     return localStorage.getItem('accessToken');
 }
@@ -36,20 +32,19 @@ function redirectToLogin() {
     window.location.href = "login.html";
 }
 
-// ================================
-// API Request with Auth
-// ================================
+// API Request 
+
 async function apiRequest(endpoint, options = {}) {
     const token = getAccessToken();
-    
+
     const defaultHeaders = {
         "Content-Type": "application/json",
     };
-    
+
     if (token) {
         defaultHeaders["Authorization"] = `Bearer ${token}`;
     }
-    
+
     const config = {
         ...options,
         headers: {
@@ -57,25 +52,22 @@ async function apiRequest(endpoint, options = {}) {
             ...options.headers,
         },
     };
-    
+
     try {
         let response = await fetch(`${API_BASE_URL}${endpoint}`, config);
-        
-        // اگر توکن منقضی شده بود، تلاش برای رفرش کردن
+
         if (response.status === 401) {
             const refreshed = await refreshAccessToken();
             if (refreshed) {
-                // تلاش مجدد با توکن جدید
                 config.headers["Authorization"] = `Bearer ${getAccessToken()}`;
                 response = await fetch(`${API_BASE_URL}${endpoint}`, config);
             } else {
-                // رفرش توکن نیز منقضی شده، بازگشت به صفحه لاگین
                 clearAuth();
                 redirectToLogin();
                 return null;
             }
         }
-        
+
         return response;
     } catch (error) {
         console.error("API Request Error:", error);
@@ -86,14 +78,14 @@ async function apiRequest(endpoint, options = {}) {
 async function refreshAccessToken() {
     const refreshToken = getRefreshToken();
     if (!refreshToken) return false;
-    
+
     try {
         const response = await fetch(`${API_BASE_URL}/token/refresh/`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ refresh: refreshToken })
         });
-        
+
         if (response.ok) {
             const data = await response.json();
             setTokens(data.access, null);
@@ -106,26 +98,24 @@ async function refreshAccessToken() {
     }
 }
 
-// ================================
 // Auth Check on Page Load
-// ================================
+
 async function checkAuth() {
     const token = getAccessToken();
-    
+
     if (!token) {
         redirectToLogin();
         return false;
     }
-    
+
     try {
         const response = await fetch(`${API_BASE_URL}/token/verify/`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ token: token })
         });
-        
+
         if (!response.ok) {
-            // تلاش برای رفرش توکن
             const refreshed = await refreshAccessToken();
             if (!refreshed) {
                 clearAuth();
@@ -133,8 +123,7 @@ async function checkAuth() {
                 return false;
             }
         }
-        
-        // بروزرسانی نام کاربر در هدر
+
         updateUserInfo();
         return true;
     } catch (error) {
@@ -153,39 +142,38 @@ function updateUserInfo() {
     }
 }
 
-// ================================
+
 // Logout Function
-// ================================
+
 async function logout() {
     const refreshToken = getRefreshToken();
-    
+
     try {
-        await apiRequest('/auth/logout/', {
+        await apiRequest('/accounts/logout/', {
             method: 'POST',
             body: JSON.stringify({ refresh: refreshToken })
         });
     } catch (error) {
         console.error("Logout error:", error);
     }
-    
+
     clearAuth();
     redirectToLogin();
 }
 
-// ================================
 // Main Application
-// ================================
-document.addEventListener("DOMContentLoaded", async () => {
+
+document.addEventListener("DOMContentLoaded", async() => {
     // بررسی احراز هویت
-    const isAuthenticated = await checkAuth();
-    if (!isAuthenticated) return;
-    
+    // const isAuthenticated = await checkAuth();
+    // if (!isAuthenticated) return;
+
     const mainContent = document.querySelector(".main-content");
     const menuButtons = document.querySelectorAll(".panel-menu button");
 
-    // ==========================
+
     // مدیریت منو
-    // ==========================
+
     menuButtons.forEach(btn => {
         btn.addEventListener("click", () => {
             const action = btn.dataset.action;
@@ -211,15 +199,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     });
 
-    // ==========================
     // لود اساتید برای dropdown
-    // ==========================
     async function loadProfessorsForCourse() {
         const teacherSelect = document.getElementById("course-teacher");
         if (!teacherSelect) return;
-        
+
         try {
-            const response = await apiRequest('/auth/professors/');
+            const response = await apiRequest('http://127.0.0.1:8000/Professor/');
             if (response && response.ok) {
                 const professors = await response.json();
                 teacherSelect.innerHTML = '<option value="">انتخاب استاد</option>';
@@ -235,67 +221,190 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    // ==========================
-    // اضافه کردن کاربر (استاد/دانشجو)
-    // ==========================
-    const addUserBtn = document.getElementById("add-user-btn");
-    addUserBtn.addEventListener("click", async() => {
-        const name = document.getElementById("user-name").value.trim();
-        const family = document.getElementById("user-family").value.trim();
-        const id = document.getElementById("user-id").value.trim();
-        const code = document.getElementById("user-code").value.trim();
-        const pass = document.getElementById("user-pass").value.trim();
-        const email = document.getElementById("user-email").value.trim();
-        const role = document.getElementById("user-role").value;
-        const errorEl = document.getElementById("user-error");
+    // اضافه کردن دانشجو و استاد
 
-        // Validation
-        if (!name || !family || !id || !code || !pass) {
-            errorEl.textContent = "لطفا تمام فیلدهای ضروری را پر کنید";
-            errorEl.style.color = "red";
-            return;
-        }
+    const roleBtns = document.querySelectorAll(".role-btn");
+    const roleSelection = document.getElementById("user-role-selection");
+    const studentForm = document.getElementById("student-form");
+    const teacherForm = document.getElementById("teacher-form");
 
-        try {
-            const response = await apiRequest('/auth/users/create/', {
-                method: "POST",
-                body: JSON.stringify({ 
-                    first_name: name, 
-                    last_name: family, 
-                    user_id: id, 
-                    national_code: code, 
-                    password: pass, 
-                    email: email, 
-                    role: role 
-                })
-            });
-            
-            if (response) {
-                const data = await response.json();
-                if (response.ok) {
-                    errorEl.style.color = "green";
-                    errorEl.textContent = "کاربر با موفقیت اضافه شد!";
-                    document.querySelectorAll("#add-user-section input").forEach(i => i.value = "");
-                } else {
-                    errorEl.style.color = "red";
-                    errorEl.textContent = data.message || "خطا در ثبت کاربر";
-                }
-            }
-        } catch (err) {
-            errorEl.style.color = "red";
-            errorEl.textContent = "ارتباط با سرور برقرار نشد";
-        }
+    roleBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+            const role = btn.dataset.role;
+            roleSelection.classList.add("hidden");
+            studentForm.classList.add("hidden");
+            teacherForm.classList.add("hidden");
+
+            if (role === "student") studentForm.classList.remove("hidden");
+            if (role === "teacher") teacherForm.classList.remove("hidden");
+        });
     });
 
-    // ==========================
+    const addStudentBtn = document.getElementById("add-student-btn");
+    if (addStudentBtn) {
+        addStudentBtn.addEventListener("click", async() => {
+            const name = document.getElementById("student-name").value.trim();
+            const family = document.getElementById("student-family").value.trim();
+            const id = document.getElementById("student-id").value.trim();
+            const code = document.getElementById("student-code").value.trim();
+            const minUnit = parseInt(document.getElementById("student-min-unit").value, 10);
+            const maxUnit = parseInt(document.getElementById("student-max-unit").value, 10);
+            const pass = document.getElementById("student-pass").value.trim();
+            const email = document.getElementById("student-email").value.trim();
+            const errorEl = document.getElementById("student-error");
+
+            if (!name || !family || !id || !code || !pass || !minUnit || !maxUnit) {
+                errorEl.textContent = "لطفا تمام فیلدهای ضروری را پر کنید";
+                errorEl.style.color = "red";
+                errorEl.style.backgroundColor = "#f8f8f8";
+                errorEl.style.padding = "5px 10px";
+                errorEl.style.borderRadius = "4px";
+                return;
+            }
+            if (minUnit < 1 || minUnit > 24 || maxUnit < 1 || maxUnit > 24 || minUnit > maxUnit) {
+                errorEl.textContent = "تعداد واحدها باید بین 1 تا 24 باشد و حداکثر ≥ حداقل";
+                errorEl.style.color = "red";
+                errorEl.style.backgroundColor = "#f8f8f8";
+                errorEl.style.padding = "5px 10px";
+                errorEl.style.borderRadius = "4px";
+                return;
+            }
+
+            try {
+                const response = await apiRequest('http://127.0.0.1:8000/students/', {
+                    method: "POST",
+                    body: JSON.stringify({
+                        first_name: name,
+                        last_name: family,
+                        user_id: id,
+                        national_code: code,
+                        password: pass,
+                        email: email,
+                        role: "student",
+                        min_unit: minUnit,
+                        max_unit: maxUnit
+                    })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    errorEl.textContent = "دانشجو با موفقیت اضافه شد!";
+                    errorEl.style.color = "green";
+                    errorEl.style.backgroundColor = "#f8f8f8";
+                    errorEl.style.padding = "5px 10px";
+                    errorEl.style.borderRadius = "4px";
+                    studentForm.reset();
+                } else {
+                    errorEl.textContent = data.message || "خطا در ثبت دانشجو";
+                    errorEl.style.color = "red";
+                    errorEl.style.backgroundColor = "#f8f8f8";
+                    errorEl.style.padding = "5px 10px";
+                    errorEl.style.borderRadius = "4px";
+                }
+            } catch (err) {
+                errorEl.textContent = "ارتباط با سرور برقرار نشد";
+                errorEl.style.color = "red";
+                errorEl.style.backgroundColor = "#f8f8f8";
+                errorEl.style.padding = "5px 10px";
+                errorEl.style.borderRadius = "4px";
+            }
+        });
+    }
+
+    const addTeacherBtn = document.getElementById("add-teacher-btn");
+    if (addTeacherBtn) {
+        addTeacherBtn.addEventListener("click", async() => {
+            const name = document.getElementById("teacher-name").value.trim();
+            const family = document.getElementById("teacher-family").value.trim();
+            const id = document.getElementById("teacher-id").value.trim();
+            const code = document.getElementById("teacher-code").value.trim();
+            const pass = document.getElementById("teacher-pass").value.trim();
+            const email = document.getElementById("teacher-email").value.trim();
+            const errorEl = document.getElementById("teacher-error");
+
+            if (!name || !family || !id || !code || !pass) {
+                errorEl.textContent = "لطفا تمام فیلدهای ضروری را پر کنید";
+                errorEl.style.color = "red";
+                errorEl.style.backgroundColor = "#f8f8f8";
+                errorEl.style.padding = "5px 10px";
+                errorEl.style.borderRadius = "4px";
+                return;
+            }
+
+            try {
+                const response = await apiRequest('http://127.0.0.1:8000/Professor/', {
+                    method: "POST",
+                    body: JSON.stringify({
+                        first_name: name,
+                        last_name: family,
+                        user_id: id,
+                        national_code: code,
+                        password: pass,
+                        email: email,
+                        role: "teacher"
+                    })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    errorEl.textContent = "استاد با موفقیت اضافه شد!";
+                    errorEl.style.color = "green";
+                    errorEl.style.backgroundColor = "#f8f8f8";
+                    errorEl.style.padding = "5px 10px";
+                    errorEl.style.borderRadius = "4px";
+                    teacherForm.reset();
+                } else {
+                    errorEl.textContent = data.message || "خطا در ثبت استاد";
+                    errorEl.style.color = "red";
+                    errorEl.style.backgroundColor = "#f8f8f8";
+                    errorEl.style.padding = "5px 10px";
+                    errorEl.style.borderRadius = "4px";
+                }
+            } catch (err) {
+                errorEl.textContent = "ارتباط با سرور برقرار نشد";
+                errorEl.style.color = "red";
+                errorEl.style.backgroundColor = "#f8f8f8";
+                errorEl.style.padding = "5px 10px";
+                errorEl.style.borderRadius = "4px";
+            }
+        });
+    }
+    // 🆕 لود دروس برای پیش‌نیاز
+    async function loadCoursesForPrerequisite() {
+        const prereqSelect = document.getElementById("course-prerequisite");
+        const removePrereqBtn = document.getElementById("remove-prerequisite-btn");
+
+        if (!prereqSelect || !removePrereqBtn) return;
+
+        try {
+            const response = await apiRequest('http://127.0.0.1:8000/courses/');
+            if (response && response.ok) {
+                const courses = await response.json();
+                prereqSelect.innerHTML = '<option value="">بدون پیش‌نیاز</option>';
+                courses.forEach(c => {
+                    const option = document.createElement('option');
+                    option.value = c.id;
+                    option.textContent = c.name;
+                    prereqSelect.appendChild(option);
+                });
+            }
+        } catch (err) {
+            console.error("Error loading courses for prerequisite:", err);
+        }
+
+        removePrereqBtn.addEventListener("click", () => {
+            prereqSelect.value = "";
+        });
+    }
+
+
     // اضافه کردن درس
-    // ==========================
+
     const addCourseBtn = document.getElementById("add-course-btn");
     const courseCapacityInput = document.getElementById("course-capacity");
     const courseTimesContainer = document.getElementById("course-times-container");
     const addTimeSlotBtn = document.getElementById("add-time-slot-btn");
 
-    // ثابت‌های روز و ساعت مطابق مدل بک‌اند
     const DAYS = [
         { value: "Saturday", label: "شنبه" },
         { value: "Sunday", label: "یکشنبه" },
@@ -311,7 +420,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         { value: "16-18", label: "16 - 18" },
     ];
 
-    // ساخت یک ردیف زمان کلاس
     function createCourseTimeRow() {
         const row = document.createElement("div");
         row.className = "course-time-row";
@@ -347,7 +455,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         removeBtn.textContent = "حذف";
         removeBtn.addEventListener("click", () => {
             row.remove();
-            // اگر بعد از حذف هیچ ردیفی نماند، یک ردیف جدید بساز
             const rows = courseTimesContainer.querySelectorAll(".course-time-row");
             if (rows.length === 0) {
                 courseTimesContainer.appendChild(createCourseTimeRow());
@@ -362,13 +469,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         return row;
     }
 
-    // مقداردهی اولیه: یک زمان کلاس پیش‌فرض
     if (courseTimesContainer) {
         courseTimesContainer.innerHTML = "";
         courseTimesContainer.appendChild(createCourseTimeRow());
     }
 
-    // دکمه افزودن روز دوم (حداکثر دو ردیف)
     if (addTimeSlotBtn) {
         addTimeSlotBtn.addEventListener("click", () => {
             const rows = courseTimesContainer.querySelectorAll(".course-time-row");
@@ -376,6 +481,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             courseTimesContainer.appendChild(createCourseTimeRow());
         });
     }
+
     addCourseBtn.addEventListener("click", async() => {
         const courseName = document.getElementById("course-name").value.trim();
         const teacherId = document.getElementById("course-teacher").value;
@@ -383,20 +489,28 @@ document.addEventListener("DOMContentLoaded", async () => {
         const capacityVal = courseCapacityInput ? parseInt(courseCapacityInput.value, 10) : 0;
         const errorEl = document.getElementById("course-error");
 
-        // Validation
         if (!courseName || !teacherId) {
             errorEl.textContent = "لطفا نام درس و استاد را انتخاب کنید";
             errorEl.style.color = "red";
+            errorEl.style.backgroundColor = "#f8f8f8";
+            errorEl.style.padding = "5px 10px";
+            errorEl.style.borderRadius = "4px";
+
+            return;
             return;
         }
 
         if (!capacityVal || capacityVal < 10 || capacityVal > 50) {
             errorEl.textContent = "ظرفیت باید بین ۱۰ تا ۵۰ باشد";
             errorEl.style.color = "red";
+            errorEl.style.backgroundColor = "#f8f8f8";
+            errorEl.style.padding = "5px 10px";
+            errorEl.style.borderRadius = "4px";
+
+            return;
             return;
         }
 
-        // جمع‌آوری زمان‌های کلاس
         const timeRows = courseTimesContainer.querySelectorAll(".course-time-row");
         const schedules = [];
         const usedKeys = new Set();
@@ -414,6 +528,11 @@ document.addEventListener("DOMContentLoaded", async () => {
                 if (usedKeys.has(key)) {
                     errorEl.textContent = "زمان‌ها و کلاس‌های تکراری وارد شده است";
                     errorEl.style.color = "red";
+                    errorEl.style.backgroundColor = "#f8f8f8";
+                    errorEl.style.padding = "5px 10px";
+                    errorEl.style.borderRadius = "4px";
+
+                    return;
                     return;
                 }
                 usedKeys.add(key);
@@ -429,21 +548,27 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (schedules.length === 0) {
             errorEl.textContent = "حداقل یک زمان و کلاس برای درس انتخاب کنید";
             errorEl.style.color = "red";
+            errorEl.style.backgroundColor = "#f8f8f8";
+            errorEl.style.padding = "5px 10px";
+            errorEl.style.borderRadius = "4px";
+
+            return;
+
             return;
         }
 
         try {
-            const response = await apiRequest('/courses/create/', {
+            const response = await apiRequest('http://127.0.0.1:8000/courses/', {
                 method: "POST",
-                body: JSON.stringify({ 
-                    name: courseName, 
+                body: JSON.stringify({
+                    name: courseName,
                     professor: teacherId,
                     capacity: capacityVal,
                     code: `C${Date.now().toString().slice(-6)}`,
                     schedules: schedules
                 })
             });
-            
+
             if (response) {
                 const data = await response.json();
                 if (response.ok) {
@@ -451,40 +576,62 @@ document.addEventListener("DOMContentLoaded", async () => {
                     errorEl.textContent = "درس با موفقیت اضافه شد!";
                     document.querySelector("#course-name").value = "";
                     if (courseCapacityInput) courseCapacityInput.value = "30";
-                    // پاک کردن زمان‌ها و ساخت یک ردیف جدید
                     if (courseTimesContainer) {
                         courseTimesContainer.innerHTML = "";
                         courseTimesContainer.appendChild(createCourseTimeRow());
                     }
+                    // 🆕 افزودن پیش‌نیاز (اختیاری)
+                    if (prereqId) {
+                        await apiRequest('http://127.0.0.1:8000/courses/add-prerequistite/', {
+                            method: "POST",
+                            body: JSON.stringify({
+                                course_id: data.id,
+                                prerequisite_id: prereqId
+                            })
+                        });
+                    }
+
+                    // پاک کردن انتخاب پیش‌نیاز
+                    const prereqSelect = document.getElementById("course-prerequisite");
+                    if (prereqSelect) prereqSelect.value = "";
+
                 } else {
                     errorEl.style.color = "red";
+                    errorEl.style.backgroundColor = "#f8f8f8";
+                    errorEl.style.padding = "5px 10px";
+                    errorEl.style.borderRadius = "4px";
+
+                    return;
                     errorEl.textContent = data.message || data.detail || "خطا در ثبت درس";
                 }
             }
         } catch (err) {
             errorEl.style.color = "red";
+            errorEl.style.backgroundColor = "#f8f8f8";
+            errorEl.style.padding = "5px 10px";
+            errorEl.style.borderRadius = "4px";
+
+            return;
             errorEl.textContent = "ارتباط با سرور برقرار نشد";
         }
     });
 
-    // ==========================
     // نمایش لیست کاربران (اساتید)
-    // ==========================
     async function renderUserList() {
         const tbody = document.querySelector("#users-table-body");
         tbody.innerHTML = "<tr><td colspan='6'>در حال بارگذاری...</td></tr>";
-        
+
         try {
-            const response = await apiRequest('/auth/professors/');
+            const response = await apiRequest('http://127.0.0.1:8000/Professor/');
             if (response && response.ok) {
                 const users = await response.json();
                 tbody.innerHTML = "";
-                
+
                 if (users.length === 0) {
                     tbody.innerHTML = "<tr><td colspan='6'>کاربری یافت نشد</td></tr>";
                     return;
                 }
-                
+
                 users.forEach(u => {
                     const tr = document.createElement("tr");
                     tr.innerHTML = `
@@ -506,98 +653,98 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    // ==========================
     // نمایش لیست دروس
-    // ==========================
     async function renderCourseList() {
         const tbody = document.querySelector("#courses-table-body");
         tbody.innerHTML = "<tr><td colspan='8'>در حال بارگذاری...</td></tr>";
-        
+
         try {
-            const response = await apiRequest('/courses/');
-            if (response && response.ok) {
-                const courses = await response.json();
-                tbody.innerHTML = "";
-                
-                if (courses.length === 0) {
-                    tbody.innerHTML = "<tr><td colspan='8'>درسی یافت نشد</td></tr>";
-                    return;
+            // 1️⃣ گرفتن لیست دروس (فقط برای IDها)
+            const listResponse = await apiRequest('http://127.0.0.1:8000/courseofferings/');
+            if (!listResponse || !listResponse.ok) {
+                tbody.innerHTML = "<tr><td colspan='8'>خطا در دریافت لیست دروس</td></tr>";
+                return;
+            }
+
+            const courseList = await listResponse.json();
+            tbody.innerHTML = "";
+
+            if (courseList.length === 0) {
+                tbody.innerHTML = "<tr><td colspan='8'>درسی یافت نشد</td></tr>";
+                return;
+            }
+
+            const DAY_FA_MAP = {
+                "Saturday": "شنبه",
+                "Sunday": "یکشنبه",
+                "Monday": "دوشنبه",
+                "Tuesday": "سه‌شنبه",
+                "Wednesday": "چهارشنبه"
+            };
+
+            // 2️⃣ گرفتن جزئیات هر درس با courses_read
+            for (const item of courseList) {
+                const detailResponse = await apiRequest(
+                    `/courses/${item.id}/courses_read`
+                );
+
+                if (!detailResponse || !detailResponse.ok) continue;
+
+                const c = await detailResponse.json();
+
+                const schedules = c.schedules || [];
+                let classText = "-";
+                let dayText = "-";
+                let timeText = "-";
+
+                if (schedules.length > 0) {
+                    classText = schedules.map(s => s.location).join("، ");
+                    dayText = schedules
+                        .map(s => DAY_FA_MAP[s.day_of_week] || s.day_of_week)
+                        .join(" و ");
+                    timeText = schedules.map(s => s.time_display).join("، ");
                 }
 
-                const DAY_FA_MAP = {
-                    "Saturday": "شنبه",
-                    "Sunday": "یکشنبه",
-                    "Monday": "دوشنبه",
-                    "Tuesday": "سه‌شنبه",
-                    "Wednesday": "چهارشنبه"
-                };
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                <td>${c.name}</td>
+                <td>${c.professor_name || '-'}</td>
+                <td>${c.code}</td>
+                <td>${c.capacity}</td>
+                <td>${classText}</td>
+                <td>${dayText}</td>
+                <td>${timeText}</td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="action-btn action-edit">ویرایش</button>
+                        <button class="action-btn action-delete">حذف</button>
+                    </div>
+                </td>
+            `;
 
-                courses.forEach(c => {
-                    const schedules = c.schedules || [];
-                    let classText = "-";
-                    let dayText = "-";
-                    let timeText = "-";
-
-                    if (schedules.length > 0) {
-                        classText = schedules.map(s => s.location).join("، ");
-                        dayText = schedules
-                            .map(s => DAY_FA_MAP[s.day_of_week] || s.day_display || s.day_of_week)
-                            .join(" و ");
-                        timeText = schedules.map(s => s.time_display).join("، ");
-                    }
-
-                    const tr = document.createElement("tr");
-                    tr.innerHTML = `
-                        <td>${c.name}</td>
-                        <td>${c.professor_name || '-'}</td>
-                        <td>${c.code}</td>
-                        <td>${c.capacity}</td>
-                        <td>${classText}</td>
-                        <td>${dayText}</td>
-                        <td>${timeText}</td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="action-btn action-edit">ویرایش</button>
-                                <button class="action-btn action-delete">حذف</button>
-                            </div>
-                        </td>
-                    `;
-
-                    const editBtn = tr.querySelector(".action-edit");
-                    const deleteBtn = tr.querySelector(".action-delete");
-
-                    if (editBtn) {
-                        editBtn.addEventListener("click", () => {
-                            openEditCoursePage(c.id);
-                        });
-                    }
-
-                    if (deleteBtn) {
-                        deleteBtn.addEventListener("click", () => {
-                            handleDeleteCourse(c.id);
-                        });
-                    }
-
-                    tbody.appendChild(tr);
+                tr.querySelector(".action-edit").addEventListener("click", () => {
+                    openEditCoursePage(c.id);
                 });
-            } else {
-                tbody.innerHTML = "<tr><td colspan='8'>خطا در دریافت دروس</td></tr>";
+
+                tr.querySelector(".action-delete").addEventListener("click", () => {
+                    handleDeleteCourse(c.id);
+                });
+
+                tbody.appendChild(tr);
             }
+
         } catch (err) {
             console.error("Error fetching courses:", err);
             tbody.innerHTML = "<tr><td colspan='8'>خطا در دریافت دروس</td></tr>";
         }
     }
 
-    // حذف درس
+
     async function handleDeleteCourse(courseId) {
         if (!confirm("آیا از حذف این درس مطمئن هستید؟")) return;
 
         try {
-            const response = await apiRequest(`/courses/${courseId}/delete/`, {
-                method: "DELETE"
-            });
-
+            const response = await apiRequest(`http://127.0.0.1:8000/courseofferings/${Id}/`, { method: "DELETE" });
             if (response && (response.status === 204 || response.ok)) {
                 alert("درس با موفقیت حذف شد.");
                 renderCourseList();
@@ -613,11 +760,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    // باز کردن صفحه ویرایش درس
     function openEditCoursePage(courseId) {
         window.location.href = `edit_course.html?id=${courseId}`;
     }
 
-    // لود داده‌ها در ابتدا
     loadProfessorsForCourse();
 });

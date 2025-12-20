@@ -9,60 +9,65 @@
 </head>
 
 <body>
-<div class="admin-container">
-    <header class="admin-header">
-        <div class="header-logo">
-            <img src="../image/chamran-logo.png" alt="لوگو" class="header-logo-img">
-            <span>ویرایش درس</span>
-        </div>
-        <div class="header-user">
-            <button class="logout-btn" onclick="window.location.href='admin_dashboard.html'">بازگشت به پنل</button>
-        </div>
-    </header>
+    <div class="admin-container">
+        <header class="admin-header">
+            <div class="header-logo">
+                <img src="../image/chamran-logo.png" alt="لوگو" class="header-logo-img">
+                <span>ویرایش درس</span>
+            </div>
+            <div class="header-user">
+                <button class="logout-btn" onclick="window.location.href='admin_dashboard.html'">بازگشت به پنل</button>
+            </div>
+        </header>
 
-    <div class="admin-body">
-        <div class="main-content">
-            <div class="page">
-                <h3>اطلاعات درس</h3>
+        <div class="admin-body">
+            <div class="main-content">
+                <div class="page">
+                    <h3>اطلاعات درس</h3>
 
-                <div class="form-group">
-                    <label for="course-name">نام درس</label>
-                    <input type="text" id="course-name" placeholder="نام درس را وارد کنید">
-                </div>
+                    <div class="form-group">
+                        <label for="course-name">نام درس</label>
+                        <input type="text" id="course-name" placeholder="نام درس را وارد کنید">
+                    </div>
 
-                <div class="form-group">
-                    <label for="course-code">کد درس</label>
-                    <input type="text" id="course-code" placeholder="کد درس" readonly>
-                </div>
+                    <div class="form-group">
+                        <label for="course-code">کد درس</label>
+                        <input type="text" id="course-code" placeholder="کد درس" readonly>
+                    </div>
 
-                <div class="form-group">
-                    <label for="course-capacity">ظرفیت کلاس (۱۰ تا ۵۰)</label>
-                    <input type="number" id="course-capacity" min="10" max="50" placeholder="ظرفیت کلاس">
-                </div>
+                    <div class="form-group">
+                        <label for="course-capacity">ظرفیت کلاس (۱۰ تا ۵۰)</label>
+                        <input type="number" id="course-capacity" min="10" max="50" placeholder="ظرفیت کلاس">
+                    </div>
 
-                <div class="form-group">
-                    <label for="course-teacher">استاد درس</label>
-                    <select id="course-teacher">
+                    <div class="form-group">
+                        <label for="course-teacher">استاد درس</label>
+                        <select id="course-teacher">
                         <option value="">در حال بارگذاری اساتید...</option>
                     </select>
-                </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="course-prerequisite">پیش‌نیاز درس (اختیاری)</label>
+                        <select id="course-prerequisite">
+        <option value="">انتخاب پیش‌نیاز</option>
+    </select>
+                        <button type="button" id="clear-prerequisite-btn" class="btn btn-secondary">حذف پیش‌نیاز</button>
+                    </div>
 
-                <div class="form-group">
-                    <label>زمان برگزاری و کلاس درس (حداکثر دو زمان)</label>
-                    <div id="course-times-container"></div>
-                    <button type="button" class="btn btn-secondary" id="add-time-slot-btn">افزودن روز دوم</button>
-                </div>
+                    <div class="form-group">
+                        <label>زمان برگزاری و کلاس درس (حداکثر دو زمان)</label>
+                        <div id="course-times-container"></div>
+                        <button type="button" class="btn btn-secondary" id="add-time-slot-btn">افزودن روز دوم</button>
+                    </div>
 
-                <button class="btn" id="save-course-btn">ذخیره تغییرات</button>
-                <p class="message" id="edit-course-message"></p>
+                    <button class="btn" id="save-course-btn">ذخیره تغییرات</button>
+                    <p class="message" id="edit-course-message"></p>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<script src="../js/edit_course.js"></script>
+    <script src="../js/edit_course.js"></script>
 </body>
 
 </html>
-
-

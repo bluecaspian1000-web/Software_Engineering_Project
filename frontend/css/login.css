@@ -9,7 +9,7 @@
 }
 
 body {
-    font-family: 'Vazir', Tahoma, sans-serif;
+    font-family: 'B Nazanin', Tahoma, sans-serif;
     background: linear-gradient(135deg, #0a1f3d, #1f2e56);
     min-height: 100vh;
     display: flex;
@@ -23,6 +23,7 @@ body {
     width: 100%;
     max-width: 420px;
 }
+
 
 /* Card */
 
@@ -38,9 +39,16 @@ body {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(15px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
+
 
 /* Logo */
 
@@ -60,6 +68,7 @@ body {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
+
 /* Header */
 
 .login-header {
@@ -77,6 +86,7 @@ body {
     font-size: 16px;
     color: rgba(224, 228, 232, 0.85);
 }
+
 
 /* Form Inputs */
 
@@ -140,6 +150,7 @@ body {
     width: 100%;
 }
 
+
 /* Password Toggle */
 
 .password-wrapper {
@@ -173,6 +184,7 @@ body {
     background: rgba(0, 0, 0, 0.25);
 }
 
+
 /* Eye icon */
 
 .eye-icon {
@@ -188,8 +200,14 @@ body {
     pointer-events: none;
 }
 
-.eye-icon.show-open svg.eye-open { display: block; }
-.eye-icon.show-open svg.eye-closed { display: none; }
+.eye-icon.show-open svg.eye-open {
+    display: block;
+}
+
+.eye-icon.show-open svg.eye-closed {
+    display: none;
+}
+
 
 /* Error Messages */
 
@@ -198,7 +216,11 @@ body {
     color: #f87171;
     margin-top: 5px;
     min-height: 16px;
+    background-color: white;
+    padding: 2px 4px;
+    border-radius: 3px;
 }
+
 
 /* Forgot Password */
 
@@ -209,9 +231,16 @@ body {
     transition: 0.25s;
     display: inline-block;
     margin-bottom: 25px;
+    .forgot-password:active {
+        content: "می‌تونی بیشتر فکر کنی!";
+        color: #fff;
+    }
 }
 
-.forgot-password:hover { text-decoration: underline; }
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
 
 /* Submit Button */
 
@@ -237,6 +266,7 @@ body {
     box-shadow: 0 10px 20px rgba(46, 164, 157, 0.4);
 }
 
+
 /* Loader */
 
 .btn-loader {
@@ -251,7 +281,12 @@ body {
     animation: spin 1s linear infinite;
 }
 
-@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 
 /* Success Message */
 
@@ -271,9 +306,15 @@ body {
     color: #4ade80;
 }
 
+
 /* Responsive */
 
 @media (max-width: 420px) {
-    .login-card { padding: 30px 24px; }
-    .login-logo img { width: 70px; height: 70px; }
+    .login-card {
+        padding: 30px 24px;
+    }
+    .login-logo img {
+        width: 70px;
+        height: 70px;
+    }
 }

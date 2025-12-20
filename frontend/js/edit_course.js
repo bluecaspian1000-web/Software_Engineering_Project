@@ -1,6 +1,4 @@
-// ================================
 // API Configuration (simple)
-// ================================
 const API_BASE_URL = "http://localhost:8000/api";
 
 function getAccessToken() {
@@ -26,9 +24,18 @@ async function apiRequest(endpoint, options = {}) {
         },
     };
 
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+    // Support absolute URLs and backend routes mounted at project root
+    const fullUrl = (typeof endpoint === "string" && (endpoint.startsWith("http://") || endpoint.startsWith("https://")))
+        ? endpoint
+        : (API_BASE_URL.endsWith("/api")
+            ? API_BASE_URL.replace(/\/api$/, "") + (String(endpoint).startsWith("/") ? endpoint : `/${endpoint}`)
+            : API_BASE_URL + (String(endpoint).startsWith("/") ? endpoint : `/${endpoint}`));
 
-    // اگر توکن منقضی شده یا وجود ندارد، به صفحه لاگین برو
+    // If shared api.js exists, prefer it (keeps behavior consistent)
+    const response = (window.api && typeof window.api.apiRequest === "function")
+        ? await window.api.apiRequest(fullUrl, config)
+        : await fetch(fullUrl, config);
+
     if (response.status === 401 || response.status === 403) {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
@@ -45,7 +52,7 @@ function getCourseIdFromUrl() {
     return params.get('id');
 }
 
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", async() => {
     const courseId = getCourseIdFromUrl();
     const nameInput = document.getElementById("course-name");
     const codeInput = document.getElementById("course-code");
@@ -59,6 +66,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!courseId) {
         messageEl.textContent = "شناسه درس نامعتبر است.";
         messageEl.style.color = "red";
+        errorEl.style.backgroundColor = "#f8f8f8";
+        errorEl.style.padding = "5px 10px";
+        errorEl.style.borderRadius = "4px";
         return;
     }
 
@@ -132,10 +142,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         return row;
     }
 
-    // لود اساتید برای dropdown
+    // لود اساتید
     async function loadProfessors(selectedProfessorId) {
         try {
-            const response = await apiRequest('/auth/professors/');
+            const response = await apiRequest('http://127.0.0.1:8000/Professor/');
             if (response && response.ok) {
                 const professors = await response.json();
                 teacherSelect.innerHTML = '<option value="">انتخاب استاد</option>';
@@ -159,41 +169,44 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // لود اطلاعات درس
     try {
-        const response = await apiRequest(`/courses/${courseId}/`);
+        const response = await apiRequest(`http://127.0.0.1:8000/courses/${Id}/`);
         if (response && response.ok) {
             const course = await response.json();
             nameInput.value = course.name || "";
             codeInput.value = course.code || "";
             capacityInput.value = course.capacity || 30;
 
-            // زمان‌بندی‌ها
             const schedules = course.schedules || [];
-            if (timesContainer) {
-                timesContainer.innerHTML = "";
-                if (schedules.length > 0) {
-                    schedules.slice(0, 2).forEach(s => {
-                        timesContainer.appendChild(createCourseTimeRow(s));
-                    });
-                } else {
-                    timesContainer.appendChild(createCourseTimeRow());
-                }
+            timesContainer.innerHTML = "";
+            if (schedules.length > 0) {
+                schedules.slice(0, 2).forEach(s => {
+                    timesContainer.appendChild(createCourseTimeRow(s));
+                });
+            } else {
+                timesContainer.appendChild(createCourseTimeRow());
             }
 
             await loadProfessors(course.professor);
         } else {
             messageEl.textContent = "خطا در دریافت اطلاعات درس.";
             messageEl.style.color = "red";
+            errorEl.style.backgroundColor = "#f8f8f8";
+            errorEl.style.padding = "5px 10px";
+            errorEl.style.borderRadius = "4px";
             return;
         }
     } catch (err) {
         console.error("Error loading course:", err);
         messageEl.textContent = "خطا در دریافت اطلاعات درس.";
         messageEl.style.color = "red";
+        errorEl.style.backgroundColor = "#f8f8f8";
+        errorEl.style.padding = "5px 10px";
+        errorEl.style.borderRadius = "4px";
         return;
     }
 
-    // دکمه افزودن زمان دوم
-    if (addTimeBtn) {
+    // افزودن زمان دوم
+    if (addTimeBtn && timesContainer) {
         addTimeBtn.addEventListener("click", () => {
             const rows = timesContainer.querySelectorAll(".course-time-row");
             if (rows.length >= 2) return;
@@ -202,7 +215,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // ذخیره تغییرات
-    saveBtn.addEventListener("click", async () => {
+    saveBtn.addEventListener("click", async() => {
         const name = nameInput.value.trim();
         const code = codeInput.value.trim();
         const capacity = parseInt(capacityInput.value, 10);
@@ -213,16 +226,21 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (!name || !code || !capacity || !professorId) {
             messageEl.textContent = "لطفاً تمام فیلدها را پر کنید.";
             messageEl.style.color = "red";
+            errorEl.style.backgroundColor = "#f8f8f8";
+            errorEl.style.padding = "5px 10px";
+            errorEl.style.borderRadius = "4px";
             return;
         }
 
         if (capacity < 10 || capacity > 50) {
             messageEl.textContent = "ظرفیت باید بین ۱۰ تا ۵۰ باشد.";
             messageEl.style.color = "red";
+            errorEl.style.backgroundColor = "#f8f8f8";
+            errorEl.style.padding = "5px 10px";
+            errorEl.style.borderRadius = "4px";
             return;
         }
 
-        // جمع‌آوری زمان‌ها
         const timeRows = timesContainer.querySelectorAll(".course-time-row");
         const schedules = [];
         const usedKeys = new Set();
@@ -240,6 +258,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                 if (usedKeys.has(key)) {
                     messageEl.textContent = "زمان‌ها و کلاس‌های تکراری وارد شده است.";
                     messageEl.style.color = "red";
+                    errorEl.style.backgroundColor = "#f8f8f8";
+                    errorEl.style.padding = "5px 10px";
+                    errorEl.style.borderRadius = "4px";
                     return;
                 }
                 usedKeys.add(key);
@@ -255,11 +276,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (schedules.length === 0) {
             messageEl.textContent = "حداقل یک زمان و کلاس برای درس انتخاب کنید.";
             messageEl.style.color = "red";
+            errorEl.style.backgroundColor = "#f8f8f8";
+            errorEl.style.padding = "5px 10px";
+            errorEl.style.borderRadius = "4px";
             return;
         }
 
         try {
-            const response = await apiRequest(`/courses/${courseId}/update/`, {
+            const response = await apiRequest(`http://127.0.0.1:8000/courses/${Id}/`, {
                 method: "PUT",
                 body: JSON.stringify({
                     name: name,
@@ -276,20 +300,70 @@ document.addEventListener("DOMContentLoaded", async () => {
                     messageEl.textContent = "تغییرات با موفقیت ذخیره شد.";
                     messageEl.style.color = "lightgreen";
 
+                    async function handlePrerequisiteUpdate(courseId, previousPrereqId, newPrereqId) {
+                        // اگر قبلاً پیش‌نیاز داشتیم و الان تغییر کرده → حذف و اضافه
+                        if (previousPrereqId && newPrereqId && previousPrereqId !== newPrereqId) {
+                            // حذف پیش‌نیاز قبلی
+                            await apiRequest('http://127.0.0.1:8000/courses/add-prerequistite/', {
+                                method: "POST",
+                                body: JSON.stringify({ course_id: courseId })
+                            });
+
+                            // اضافه کردن پیش‌نیاز جدید
+                            await apiRequest('http://127.0.0.1:8000/courses/add-prerequistite/', {
+                                method: "POST",
+                                body: JSON.stringify({ course_id: courseId, prerequisite_id: newPrereqId })
+                            });
+
+                            showPrereqMessage("پیش‌نیاز تغییر کرد و اضافه شد", "green");
+
+                        }
+                        // اگر قبلاً پیش‌نیاز نداشتیم و حالا اضافه شده → فقط add
+                        else if (!previousPrereqId && newPrereqId) {
+                            await apiRequest('http://127.0.0.1:8000/courses/add-prerequistite/', {
+                                method: "POST",
+                                body: JSON.stringify({ course_id: courseId, prerequisite_id: newPrereqId })
+                            });
+
+                            showPrereqMessage("پیش‌نیاز اضافه شد", "green");
+                        }
+                        // اگر قبلاً داشتیم و حالا حذف شده → فقط remove
+                        else if (previousPrereqId && !newPrereqId) {
+                            await apiRequest('http://127.0.0.1:8000/courses/add-prerequistite/', {
+                                method: "POST",
+                                body: JSON.stringify({ course_id: courseId })
+                            });
+
+                            showPrereqMessage("پیش‌نیاز حذف شد", "red");
+                        }
+                    }
+
+                    // تابع نمایش پیام با رنگ و پس‌زمینه سفید
+                    function showPrereqMessage(text, color) {
+                        const messageEl = document.getElementById("edit-course-message");
+                        messageEl.textContent = text;
+                        messageEl.style.color = color;
+                        messageEl.style.backgroundColor = "white";
+                    }
+
                     setTimeout(() => {
                         window.location.href = "admin_dashboard.html";
                     }, 1200);
                 } else {
                     messageEl.textContent = data.message || "خطا در ذخیره تغییرات.";
                     messageEl.style.color = "red";
+                    errorEl.style.backgroundColor = "#f8f8f8";
+                    errorEl.style.padding = "5px 10px";
+                    errorEl.style.borderRadius = "4px";
                 }
             }
         } catch (error) {
             console.error("Error updating course:", error);
             messageEl.textContent = "خطا در ارتباط با سرور.";
             messageEl.style.color = "red";
+            errorEl.style.backgroundColor = "#f8f8f8";
+            errorEl.style.padding = "5px 10px";
+            errorEl.style.borderRadius = "4px";
         }
     });
 });
-
-

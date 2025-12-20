@@ -1,0 +1,54 @@
+/* پایه پنل استاد */
+
+body {
+    font-family: 'B Nazanin', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f9;
+    color: #333;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #4a76a8;
+    color: white;
+    padding: 15px 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.header-right button {
+    background-color: #ff4b5c;
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.header-right button:hover {
+    background-color: #e03e4e;
+}
+
+.main-content {
+    padding: 20px;
+}
+
+
+/* نمونه استایل برای پیام خوش آمدگویی */
+
+.main-content p {
+    background-color: white;
+    padding: 15px 20px;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+}

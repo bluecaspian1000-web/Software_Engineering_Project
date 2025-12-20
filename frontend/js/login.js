@@ -1,25 +1,16 @@
-// ================================
-// API Base URL Configuration
-// ================================
 const API_BASE_URL = "http://localhost:8000/api";
 
-// ================================
 // Toggle Password Visibility
-// ================================
 const passwordInput = document.getElementById("password");
 const toggleBtn = document.getElementById("passwordToggle");
 const eyeIcon = toggleBtn.querySelector(".eye-icon");
 
 toggleBtn.addEventListener("click", () => {
-    // تغییر نوع input
     passwordInput.type = passwordInput.type === "password" ? "text" : "password";
-    // تغییر آیکون چشم
     eyeIcon.classList.toggle("show-open");
 });
 
-// ================================
 // Form Validation & Submit
-// ================================
 const form = document.getElementById("loginForm");
 const usernameInput = document.getElementById("username");
 const usernameError = document.getElementById("usernameError");
@@ -27,7 +18,7 @@ const passwordError = document.getElementById("passwordError");
 const successBox = document.getElementById("successMessage");
 
 form.addEventListener("submit", async function(e) {
-    e.preventDefault(); // جلوگیری از ریفرش شدن فرم
+    e.preventDefault();
 
     let isValid = true;
     usernameError.textContent = "";
@@ -35,7 +26,7 @@ form.addEventListener("submit", async function(e) {
 
     // ---------------- Username Validation ----------------
     const usernameValue = usernameInput.value.trim();
-    const alphanumericRegex = /^[a-zA-Z0-9]+$/; // حروف و اعداد
+    const alphanumericRegex = /^[a-zA-Z0-9]+$/;
 
     if (usernameValue === "") {
         usernameError.textContent = "نام کاربری را وارد کنید.";
@@ -60,30 +51,50 @@ form.addEventListener("submit", async function(e) {
         showLoading();
 
         try {
-            const response = await fetch(`${API_BASE_URL}/auth/login/`, {
-                method: "POST",
-                headers: { 
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ 
-                    username: usernameValue, 
-                    password: passValue 
-                })
-            });
+            let response;
+            let data;
 
-            const data = await response.json();
+            if (window.api && typeof window.api.login === "function") {
+                const result = await window.api.login(usernameValue, passValue);
+                response = result.res;
+                data = result.data;
+            } else {
+                response = await fetch(`http://127.0.0.1:8000/login/`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        username: usernameValue,
+                        password: passValue
+                    })
+                });
+
+                data = await response.json();
+            }
             hideLoading();
 
             if (response.ok && data.success) {
-                // ذخیره توکن‌ها در localStorage
                 localStorage.setItem('accessToken', data.tokens.access);
                 localStorage.setItem('refreshToken', data.tokens.refresh);
                 localStorage.setItem('user', JSON.stringify(data.user));
-                
+
                 showSuccessMessage();
-                // انتقال به داشبورد پس از 1.5 ثانیه
+
+                // هدایت بر اساس نقش کاربر
                 setTimeout(() => {
-                    window.location.href = "admin_dashboard.html";
+                    switch (data.user.role) {
+                        case "admin":
+                            window.location.href = "admin_dashboard.html";
+                            break;
+                        case "student":
+                            window.location.href = "student.html";
+                            break;
+                        case "professor":
+                            window.location.href = "professor.html";
+                            break;
+                        default:
+                            alert("نقش کاربر مشخص نیست!");
+                            break;
+                    }
                 }, 1500);
             } else {
                 passwordError.textContent = data.message || "خطا در ورود!";
@@ -97,9 +108,7 @@ form.addEventListener("submit", async function(e) {
     }
 });
 
-// ================================
 // Loading Button Animation
-// ================================
 function showLoading() {
     const btn = document.querySelector(".login-btn");
     const loader = btn.querySelector(".btn-loader");
@@ -114,22 +123,16 @@ function hideLoading() {
     btn.disabled = false;
 }
 
-// ================================
 // Show Success Message
-// ================================
 function showSuccessMessage() {
-    const card = document.querySelector(".login-card");
     successBox.style.display = "flex";
     successBox.classList.add("show");
 }
 
-// ================================
 // Check if already logged in
-// ================================
 document.addEventListener("DOMContentLoaded", () => {
     const token = localStorage.getItem('accessToken');
     if (token) {
-        // اگر توکن موجود بود، بررسی اعتبار آن
         verifyToken(token);
     }
 });
@@ -138,17 +141,24 @@ async function verifyToken(token) {
     try {
         const response = await fetch(`${API_BASE_URL}/token/verify/`, {
             method: "POST",
-            headers: { 
-                "Content-Type": "application/json"
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ token: token })
         });
 
         if (response.ok) {
-            // توکن معتبر است، انتقال به داشبورد
-            window.location.href = "admin_dashboard.html";
+            const user = JSON.parse(localStorage.getItem('user'));
+            switch (user.role) {
+                case "admin":
+                    window.location.href = "admin_dashboard.html";
+                    break;
+                case "student":
+                    window.location.href = "student.html";
+                    break;
+                case "professor":
+                    window.location.href = "professor.html";
+                    break;
+            }
         } else {
-            // توکن نامعتبر است، پاک کردن
             localStorage.removeItem('accessToken');
             localStorage.removeItem('refreshToken');
             localStorage.removeItem('user');
@@ -157,3 +167,12 @@ async function verifyToken(token) {
         console.error("Token verification error:", error);
     }
 }
+document.addEventListener("DOMContentLoaded", () => {
+    const forgotLink = document.querySelector(".forgot-password");
+    if (forgotLink) {
+        forgotLink.addEventListener("click", (e) => {
+            e.preventDefault();
+            forgotLink.textContent = "می‌تونی بیشتر فکر کنی!";
+        });
+    }
+});

@@ -1,0 +1,166 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(135deg, #4e9af1, #1f3a93);
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* Header */
+
+.student-header {
+    display: flex;
+    align-items: center;
+    padding: 15px 30px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+}
+
+.student-header .title {
+    margin-left: auto;
+    font-size: 30px;
+}
+
+
+/* خروج سمت چپ */
+
+.logout-btn {
+    padding: 8px 18px;
+    border-radius: 8px;
+    border: 1px solid #ff4d4f;
+    background: #ffffff;
+    color: #ff4d4f;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.logout-btn:hover {
+    background: #ff4d4f;
+    color: #fff;
+}
+
+
+/* Body */
+
+.student-body {
+    display: flex;
+    flex: 1;
+    gap: 20px;
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+
+/* Sidebar */
+
+.student-panel {
+    flex-shrink: 0;
+}
+
+.student-panel button {
+    width: 220px;
+    padding: 14px 15px;
+    font-size: 18px;
+    border-radius: 10px;
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+    text-align: right;
+}
+
+.student-panel button:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+
+/* Main Content */
+
+.main-content {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+
+/* Search Fields */
+
+.search-fields {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.search-fields input {
+    flex: 1;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    font-size: 16px;
+    outline: none;
+}
+
+.search-fields input::placeholder {
+    color: #cbd5e1;
+    opacity: 0.7;
+}
+
+
+/* Table */
+
+.table-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+table th,
+table td {
+    padding: 12px 10px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 14px;
+}
+
+table thead {
+    background: linear-gradient(135deg, #4e9af1, #1f3a93);
+    color: #fff;
+}
+
+table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+
+/* کلاس برای مخفی کردن */
+
+.hidden {
+    display: none;
+}
