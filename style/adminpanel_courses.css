@@ -1,0 +1,349 @@
+
+
+/* ================= Lists ================= */
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  background: #ffffff;
+  padding: 12px 15px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+li:hover {
+  transform: translateX(-3px);
+}
+
+/* ================= Update Item ================= */
+.update-item {
+  background: #ffffff;
+  padding: 12px 15px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  border-right: 4px solid #3b82f6;
+}
+
+/* ================= Forms ================= */
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+input {
+  width: 30%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 7px;
+  border: 3px solid lch(57.56% 40.54 24.3);
+  font-size: 14px;
+}
+
+
+input:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+/* ================= Buttons ================= */
+button {
+  background: #2563eb;
+  color: #fff;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-left: 10px;
+  font-size: 14px;
+}
+
+button:hover {
+  background: #1d4ed8;
+}
+
+button:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Delete button special */
+button.delete {
+  background: #dc2626;
+}
+
+button.delete:hover {
+  background: #b91c1c;
+}
+
+/* ================= Details ================= */
+.content p {
+  font-size: 15px;
+  margin: 8px 0;
+}
+
+.content ul li {
+  cursor: default;
+  transform: none;
+}
+
+/* ================= Responsive ================= */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 180px;
+  }
+  .content {
+    padding: 15px;
+  }
+}
+
+.submenu {
+  display: none;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+.submenu-item {
+  padding: 10px 15px;
+  background: #4b5563;
+  color: #fff;
+  margin-bottom: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.submenu-item:hover {
+  background: #6b7280;
+}
+
+
+
+/*============== courses-list ==============*/
+.course-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px; /* فاصله افقی و عمودی بین کارت‌ها */
+  margin-top: 20px;
+}
+
+.course-card {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  padding: 20px;
+  width: 220px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s, background-color 0.3s;
+  /* فاصله عمودی اضافی */
+  margin-bottom: 15px; 
+}
+
+.course-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+  background-color: #e0f7fa;
+}
+
+/* ============== course-details ============*/
+.course-detail-card {
+  max-width: 500px;
+  margin: 20px auto;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  padding: 20px 25px;
+  text-align: right; /* مناسب برای زبان فارسی */
+  line-height: 1.6;
+}
+
+.course-detail-card h2 {
+  margin-top: 0;
+  color: #333;
+}
+
+.course-detail-card .course-info p {
+  margin: 8px 0;
+  font-size: 16px;
+  color: #555;
+}
+
+.course-detail-card .course-prereq h4 {
+  margin: 15px 0 5px;
+  color: #333;
+}
+
+.course-detail-card .course-prereq ul {
+  padding-right: 20px;
+  list-style-type: disc;
+  color: #555;
+}
+
+.back-btn {
+  margin-top: 15px;
+  padding: 8px 15px;
+  border: none;
+  background-color: #00acc1;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.back-btn:hover {
+  background-color: #007c91;
+}
+
+.prereq-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.prereq-item {
+  background-color: #e0f7fa;
+  color: #007c91;
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 14px;
+  cursor: default;
+  transition: background-color 0.2s;
+}
+
+.prereq-item:hover {
+  background-color: #b2ebf2;
+}
+
+.prereq-item.none {
+  background-color: #eeeeee;
+  color: #888888;
+}
+
+/*============== update ============ */
+/* کانتینر کارت‌ها */
+.update-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+/* کارت درس */
+.update-card {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  padding: 15px 20px;
+  width: 220px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s, background-color 0.3s;
+}
+
+.update-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+  background-color: #e0f7fa;
+}
+
+.update-form-card {
+  max-width: 400px;
+  margin: 20px auto;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  padding: 20px 25px;
+}
+
+.update-form-card input {
+  width: 100%;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+.update-form-card label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.update-form-card button {
+  padding: 10px 20px;
+  border: none;
+  background-color: #00acc1;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.update-form-card button:hover {
+  background-color: #007c91;
+}
+
+/* ================== delete course ==================== */
+.delete-btn {
+  display: block;            /* عمودی کردن */
+  width: 200px;              /* بزرگ‌تر شدن دکمه */
+  padding: 12px 20px;        /* فضای داخلی بیشتر */
+  margin: 10px auto;         /* فاصله بین دکمه‌ها و وسط چین */
+  background-color: #e53935; /* رنگ قرمز گرم */
+  color: white;
+  border: none;
+  border-radius: 8px;        /* گوشه‌های گرد */
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.delete-btn:hover {
+  background-color: #b71c1c; /* رنگ تیره‌تر هنگام هاور */
+  transform: translateY(-2px); /* افکت کوچک شناور شدن */
+}
+
+/* ================= prerequisite  ================*/
+.prereq-form {
+  display: flex;
+  flex-direction: column; /* چینش عمودی */
+  max-width: 400px;
+  margin: 20px auto;
+  gap: 15px; /* فاصله عمودی بین عناصر */
+  background-color: #f5f5f5;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+}
+
+.prereq-form input {
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.prereq-form button {
+  padding: 12px;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  background-color: #00acc1; /* یا رنگ دلخواه */
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.prereq-form button:hover {
+  background-color: #007c91;
+  transform: translateY(-2px);
+}

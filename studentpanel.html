@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <title>پنل دانشجو</title>
+  <!-- CSS -->
+   <link rel="stylesheet" href="./student_style/student_panel.css">
+  
+</head>
+<body>
+
+
+
+<div class="sidebar">
+  <h2>دانشجو پنل</h2>
+
+  <!-- مدیریت دروس ارائه شده -->
+  <div class="menu-item" data-target="offeredMenu">
+     دروس ارائه شده
+  </div>
+  <div class="submenu" id="offeredMenu">
+    <div class="submenu-item" onclick="renderOferedCourseList()">لیست دروس ارائه شده</div>
+  </div>
+
+</div>
+
+<div class="content" id="content">
+  <h2>به پنل دانشجو خوش آمدید</h2>
+</div>
+
+
+<!-- JS -->
+<script src="./js/global.js" defer></script>
+<script src="./student_js/student.js" defer></script>
+
+
+</body>
+</html>

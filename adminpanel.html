@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <title>ادمین پنل</title>
+  <!-- CSS -->
+   <link rel="stylesheet" href="./style/adminpanelglobal.css">
+  <link rel="stylesheet" href="./style/adminpanel_offeredcourses.css">
+  <link rel="stylesheet" href="./style/adminpanel_courses.css">
+</head>
+<body>
+
+
+
+<div class="sidebar">
+  <h2>ادمین پنل</h2>
+
+  <!-- مدیریت دروس -->
+  <div class="menu-item" data-target="courseMenu">
+    مدیریت دروس
+  </div>
+  <div class="submenu" id="courseMenu">
+    <div class="submenu-item" onclick="renderCourseList()">لیست دروس</div>
+    <div class="submenu-item" onclick="renderAddCourse()">افزودن درس</div>
+    <div class="submenu-item" onclick="renderUpdateCourse()">آپدیت درس</div>
+    <div class="submenu-item" onclick="renderDeleteCourse()">حذف درس</div>
+  </div>
+
+  <!-- مدیریت پیشنیاز -->
+  <div class="menu-item" data-target="prereqMenu">
+    مدیریت پیشنیاز
+  </div>
+  <div class="submenu" id="prereqMenu">
+    <div class="submenu-item" onclick="renderAddPrereq()">افزودن پیشنیاز</div>
+    <div class="submenu-item" onclick="renderRemovePrereq()">حذف پیشنیاز</div>
+  </div>
+
+  <!-- مدیریت دروس ارائه سده -->
+  <div class="menu-item" data-target="offeredMenu">
+    مدیریت دروس ارائه شده
+  </div>
+  <div class="submenu" id="offeredMenu">
+    <div class="submenu-item" onclick="renderOferedCourseList()">لیست دروس ارائه شده</div>
+    <div class="submenu-item" onclick="renderOfferCourse()">ارائه درس</div>
+    <div class="submenu-item" onclick="renderUpdateOferedCourse()">آپدیت درس ارائه شده</div>
+    <div class="submenu-item" onclick="renderDeleteOferedCourse()">حذف درس ارائه شده</div>
+  </div>
+</div>
+
+
+
+<div class="content" id="content">
+  <h2>به پنل مدیریت خوش آمدید</h2>
+</div>
+
+<!-- JS -->
+<script src="./js/global.js" defer></script>
+<script src="./js/adminpannel_courses.js" defer></script>
+<script src="./js/adminpanel_offeredcourses.js" defer></script>
+
+</body>
+</html>
