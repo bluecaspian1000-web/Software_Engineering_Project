@@ -1,0 +1,461 @@
+/* ---------------------------------
+   University Chamran Admin Panel - Professional CSS
+----------------------------------- */
+
+@font-face {
+    font-family: 'B Nazanin';
+    src: url('../fonts/B-Nazanin.woff2') format('woff2'), url('../fonts/B-Nazanin.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'B Nazanin', Tahoma, sans-serif;
+    background: linear-gradient(135deg, #1f2e56, #0a1f3d);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    color: #edf2f7;
+    font-size: 20px;
+}
+
+
+/* Header Styles */
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.header-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.header-logo-img {
+    width: 45px;
+    height: 45px;
+    object-fit: contain;
+}
+
+.header-user {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.header-user span {
+    font-size: 16px;
+    color: #94a3b8;
+}
+
+.logout-btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 1px solid #ef4444;
+    background: transparent;
+    color: #ef4444;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+    background: #ef4444;
+    color: #fff;
+}
+
+
+/* Admin Container */
+
+.admin-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 100vh;
+}
+
+.admin-body {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    flex: 1;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.admin-panel {
+    flex-shrink: 0;
+}
+
+.admin-panel h2 {
+    color: #fff;
+    margin-bottom: 15px;
+    font-size: 20px;
+    padding: 0 10px;
+}
+
+.panel-menu {
+    width: 220px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 15px;
+    color: #fff;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.panel-menu button {
+    width: 100%;
+    padding: 14px 15px;
+    margin-bottom: 8px;
+    border-radius: 10px;
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: right;
+    font-size: 16px;
+}
+
+.panel-menu button:hover {
+    background: rgba(46, 164, 157, 0.4);
+    transform: translateX(-3px);
+}
+
+.panel-menu button:last-child {
+    margin-bottom: 0;
+}
+
+
+/* Main Content */
+
+.main-content {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(18px);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+
+/* Page Sections */
+
+.page {
+    width: 100%;
+}
+
+.page.hidden {
+    display: none;
+}
+
+.page h3 {
+    font-size: 24px;
+    margin-bottom: 25px;
+    color: #fff;
+    border-bottom: 2px solid rgba(46, 164, 157, 0.5);
+    padding-bottom: 10px;
+}
+
+
+/* Welcome Section */
+
+.welcome-content {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.welcome-content h3 {
+    border: none;
+    font-size: 30px;
+    margin-bottom: 15px;
+}
+
+.welcome-content p {
+    color: #94a3b8;
+    font-size: 18px;
+}
+
+
+/* Form Styles */
+
+.form-group {
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #e2e8f0;
+    font-size: 16px;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.08);
+    color: #edf2f7;
+    font-size: 20px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.form-group input::placeholder {
+    color: #64748b;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #2ea49d;
+    box-shadow: 0 0 0 3px rgba(46, 164, 157, 0.2);
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.form-group select {
+    background: rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+}
+
+.form-group select option {
+    background: #1f2e56;
+    color: #fff;
+}
+
+
+/* Button Styles */
+
+.btn {
+    padding: 14px 28px;
+    border-radius: 10px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: linear-gradient(135deg, #2ea49d, #1f88a8);
+    color: #fff;
+    font-size: 16px;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(46, 164, 157, 0.35);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+
+/* Secondary button (for small actions like add time slot) */
+
+.btn.btn-secondary {
+    margin-top: 10px;
+    padding: 10px 18px;
+    font-size: 14px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #e2e8f0;
+    box-shadow: none;
+}
+
+.btn.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.16);
+    transform: translateY(0);
+}
+
+
+/* Table Styles */
+
+.table-container {
+    overflow-x: auto;
+    width: 100%;
+    border-radius: 12px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+table thead {
+    background: linear-gradient(135deg, #2ea49d, #1f88a8);
+    color: #fff;
+}
+
+table th,
+table td {
+    padding: 16px 18px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: 16px;
+}
+
+table th {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+table tbody tr {
+    transition: background 0.2s ease;
+}
+
+table tbody tr:nth-child(even) {
+    background: rgba(46, 164, 157, 0.05);
+}
+
+table tbody tr:hover {
+    background: rgba(46, 164, 157, 0.15);
+}
+
+
+/* Message Styles */
+
+.message {
+    font-size: 18px;
+    margin-top: 18px;
+    padding: 18px 18px;
+    border-radius: 18px;
+}
+
+.message.success {
+    background: rgba(74, 222, 128, 0.2);
+    color: #4ade80;
+}
+
+.message.error {
+    background: #ffffff;
+    /* پس‌زمینه کاملاً سفید */
+    color: #ef4444;
+    /* متن قرمز */
+    border: 1px solid #ef4444;
+    /* حاشیه قرمز */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    /* سایه ظریف */
+    font-size: 16px;
+    padding: 12px 18px;
+    border-radius: 10px;
+}
+
+
+/* ==========================
+   Add User Section Styles
+========================== */
+
+.role-selection {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.role-btn {
+    flex: 1;
+    background: linear-gradient(135deg, #2ea49d, #1f88a8);
+    color: #fff;
+    font-weight: 600;
+    padding: 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    font-size: 16px;
+}
+
+.role-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(46, 164, 157, 0.35);
+}
+
+.user-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 500px;
+    margin-top: 15px;
+}
+
+.user-form.hidden {
+    display: none;
+}
+
+.user-form .form-group input,
+.user-form .form-group select {
+    padding: 12px 14px;
+    font-size: 16px;
+}
+
+.user-form button {
+    align-self: flex-start;
+    padding: 12px 22px;
+    font-size: 16px;
+}
+
+
+/* Responsive Styles remain unchanged */
+
+
+/* ==========================
+   پیام‌ها (Error & Success)
+========================== */
+
+.message {
+    font-size: 14px;
+    margin-top: 15px;
+    padding: 12px 18px;
+    border-radius: 10px;
+    font-family: 'B Nazanin', Tahoma, sans-serif;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+
+/* پیام خطا */
+
+.message.error {
+    background: #ffffff;
+    /* پس‌زمینه سفید */
+    color: #ef4444;
+    /* متن قرمز */
+    border: 1px solid #ef4444;
+}
+
+
+/* پیام موفقیت */
+
+.message.success {
+    background: #ffffff;
+    /* پس‌زمینه سفید */
+    color: #4ade80;
+    /* متن سبز */
+    border: 1px solid #4ade80;
+}

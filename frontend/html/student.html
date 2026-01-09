@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پنل دانشجو</title>
+    <link rel="stylesheet" href="../css/student.css">
+</head>
+
+<body>
+    <div class="student-container">
+
+        <!-- Header -->
+        <header class="student-header">
+            <h1 class="title">پنل دانشجو</h1>
+            <button class="logout-btn" onclick="logout()">خروج</button>
+        </header>
+
+        <!-- Body -->
+        <div class="student-body">
+
+            <!-- Sidebar -->
+            <div class="student-panel">
+                <button id="coursesBtn">نمایش دروس ارائه شده</button>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Search Fields -->
+                <div class="search-fields hidden">
+                    <input type="text" id="searchCourse" placeholder="جستجو بر اساس نام درس">
+                    <input type="text" id="searchTeacher" placeholder="جستجو بر اساس نام استاد">
+                </div>
+
+                <!-- Table -->
+                <div class="table-container hidden">
+                    <table id="coursesTable">
+                        <thead>
+                            <tr>
+                                <th>نام درس</th>
+                                <th>نام استاد</th>
+                                <th>کد درس</th>
+                                <th>ظرفیت</th>
+                                <th>کلاس</th>
+                                <th>روز هفته</th>
+                                <th>تایم کلاس</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- داده‌ها از API اینجا قرار می‌گیرند -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/student.js"></script>
+</body>
+
+</html>
